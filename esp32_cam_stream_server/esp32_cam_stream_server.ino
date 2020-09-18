@@ -85,19 +85,72 @@ void handle_status(void){ // returns the current sensors settings and other stat
   server.send(200, "text/plain", "Status");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void handle_settings(void){ //handles change of camera settings by query strings
-  sensor_t * s = esp_camera_sensor_get();
-  numOfArgs = server.args();
+void handle_settings(void){ //handles changes of camera settings by query strings
+  int numOfArgs = server.args();
+  bool QueryStatus = true;
   
-  for (int i = 0; i < server.args(); i++) {
-  
-  message += "Arg nº" + (String)i + " –> ";     //Include the current iteration value
-  message += server.argName(i) + ": ";          //Get the name of the parameter
-  message += server.arg(i) + "\n";              //Get the value of the parameter
-  
+  for (int i = 0; i < numOfArgs; i++) {
+    String parameter_name = server.argName(i);
+    String parameter_value = server.arg(i);
+    print(parameter_name + " : ")
+    print(parameter_value.toInt());
+    print(parameter_value);
+    if(parameter_name == "resolution") if(!change_resolution(parameter_value.toInt())){ QueryStatus = false;  break;} 
+    if(!change_settings(parameter_name,parameter_value.toInt()) ) { QueryStatus = false;  break;} 
   } 
   
-  server.send(200, "text/plain", message);       //Response to the HTTP request
+  if(QueryStatus) server.send(200, "text/plain", "OK");       //Response to the HTTP request
+  else server.send(200, "text/plain", "NOPE");       //Response to the HTTP request
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool change_resolution(int value){
+  print("Changing settings....");
+  
+  sensor_t * s = esp_camera_sensor_get();
+  
+  if(s->pixformat == PIXFORMAT_JPEG && (value>=0 && value<=10))  s->set_framesize(s, (framesize_t)value);
+  
+  return true;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool change_settings(String id, int value){
+  print("Changing settings....");
+  
+  sensor_t * s = esp_camera_sensor_get();
+
+  if(id == "quality" && (value >= 0 && value <= 63))        s->set_quality(s, value);
+
+  if(id == "contrast" && (value >= -2 && value <= 2))       s->set_contrast(s, value);
+  if(id == "brightness" && (value >= -2 && value <= 2))     s->set_brightness(s, value);  
+  if(id == "saturation" && (value >= -2 && value <= 2))     s->set_saturation(s, value);
+
+  if(id == "awb" && (value == 0 || value == 1))             s->set_whitebal(s, value);    
+  if(id == "awb_gain" && (value == 0 || value == 1))        s->set_awb_gain(s, value);
+  if(id == "wb_mode" && (value >= 0 && value <= 4))         s->set_wb_mode(s, value);
+  
+  if(id == "aec2" && (value == 0 || value == 1))            s->set_aec2(s, value);
+  if(id == "ae_level" && (value >= -2 && value <= 2))       s->set_ae_level(s, value);
+  if(id == "aec_value" && (value >= 0 && value <= 1200))    s->set_aec_value(s, value);
+
+  if(id == "agc" && (value == 0 || value == 1))             s->set_gain_ctrl(s, value);
+  if(id == "agc_gain" && (value >= 0 && value <= 30))       s->set_agc_gain(s, value);
+  if(id == "gainceiling" && (value >= 0 && value <= 6))     s->set_gainceiling(s, (gainceiling_t)value);
+
+  if(id == "bpc" && (value == 0 || value == 1))             s->set_bpc(s, value);
+  if(id == "wpc" && (value == 0 || value == 1))             s->set_wpc(s, value);
+  if(id == "raw_gma" && (value == 0 || value == 1))         s->set_raw_gma(s, value);
+    
+  if(id == "denoise" && (value == 0 || value == 1))         s->set_denoise(s, value);     
+  if(id == "lenc" && (value == 0 || value == 1))            s->set_lenc(s, value);
+
+  if(id == "colorbar" && (value == 1 && value == 0))        s->set_colorbar(s, value);
+  if(id == "special_effect" && (value >= 0 && value <= 6))  s->set_special_effect(s, value);
+  
+  if(id == "hmirror" && (value == 0 || value == 1))         s->set_hmirror(s, value);
+  if(id == "vflip" && (value == 0 || value == 1))           s->set_vflip(s, value);
+  
+  else return false;
+  return true;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void handleNotFound()
@@ -111,37 +164,6 @@ void handleNotFound()
   message += server.args();
   message += "\n";
   server.send(200, "text / plain", message);
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool change_settings(String id,int value){
-  if(id == "quality" && (value >= 0 && value <= 63)) ;
-  if(id == "denoise" && (value == 0 || value == 1)) ;
-  if(id == "contrast" && (value >= -2 && value <= 2)) ;
-  if(id == "brightness" && (value >= -2 && value <= 2)) ;
-  
-  if(id == "saturation" && (value >= -2 && value <= 2)) ;
-  if(id == "colorbar" && (value == 1 && value == 0)) ;
-  if(id == "special_effect" && (value >= 0 && value <= 6)) ;
-  if(id == "whitebal" && (value == 0 || value == 1)) ; 
-  if(id == "awb_gain" && (value == 0 || value == 1)) ;
-  if(id == "wb_mode" && (value >= 0 && value <= 4)) ;
-  if(id == "exposure_ctrl" && (value == 0 || value == 1)) ;
-  if(id == "aec2" && (value == 0 || value == 1)) ;
-  if(id == "ae_level" && (value >= -2 && value <= 2)) ;
-
-  if(id == "aec_value" && (value >= 0 && value <= 1200)) ;
-  if(id == "gain_ctrl" && (value == 0 || value == 1)) ;
-  if(id == "agc_gain" && (value >= 0 && value <= 30)) ;
-  if(id == "gainceiling" && (value >= 0 && value <= 6)) ;
-
-  if(id == "bpc" && (value == 0 || value == 1)) ;
-  if(id == "wpc" && (value == 0 || value == 1)) ;
-  if(id == "raw_gma" && (value == 0 || value == 1)) ;
-  if(id == "lenc" && (value == 0 || value == 1)) ;
-  if(id == "hmirror" && (value == 0 || value == 1)) ;
-  if(id == "vflip" && (value == 0 || value == 1)) ;
-  else return false
-  return true;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup()
@@ -186,7 +208,7 @@ void setup()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //  WiFi.hostname(NET_deviceName);      // DHCP Hostname
-//  WiFi.config(NET_staticIP, NET_subnet, NET_gateway, NET_dns);
+//  WiFi.config(NET_ staticIP, NET_subnet, NET_gateway, NET_dns);
   WiFi.mode(WIFI_STA);
   WiFi.begin(NET_SSID, NET_PWD);
   

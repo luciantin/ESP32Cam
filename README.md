@@ -6,19 +6,19 @@
 
 Only  integer values
 
-| Setting  | Value   | |
+| Setting  | Value   | Description |
 |:-:|:-:| :-:| 
-| quality  | 0 - 63 | |
-| denoise  |  0 = disable , 1 = enable | |
-| contrast  | -2 to 2  | |
+| quality  | 0 - 63 | image quality, lower better |
+| denoise  |  0 = disable , 1 = enable ||
+| contrast  | -2 to 2  |  |
 | brightness  | -2 to 2  | |
 |  saturation | -2 to 2  | | 
-| colorbar  |  0 = disable , 1 = enable | | 
+| colorbar  |  0 = disable , 1 = enable | adds colorbar to image | 
 |  special_effect | 0 to 6   (0 - No Effect, 1 - Negative, 2 - Grayscale, 3 - Red Tint, 4 - Green Tint, 5 - Blue Tint, 6 - Sepia)  | | 
-| whitebal  |  0 = disable , 1 = enable | | 
-| awb_gain  |  0 = disable , 1 = enable | | 
-|  wb_mode |  0 to 4 - if awb_gain enabled (0 - Auto, 1 - Sunny, 2 - Cloudy, 3 - Office, 4 - Home) | | 
-| exposure_ctrl  |  0 = manual , 1 = auto | no manual exposure control support | 
+| whitebal  |  0 = disable , 1 = enable | white balance | 
+| awb_gain  |  0 = disable , 1 = enable | Automatic White Balance gain | 
+|  wb_mode |  0 to 4  (0 - Auto, 1 - Sunny, 2 - Cloudy, 3 - Office, 4 - Home) | if awb_gain enabled | 
+|  aec |  0 = manual , 1 = auto | automatic exposure control | 
 |  aec2 |  0 = disable , 1 = enable | | 
 | ae_level  | -2 to 2  | | 
 | aec_value  | 0 to 1200  | | 
@@ -36,18 +36,19 @@ Only  integer values
  
 Framesize
 
-| Value  | size  |
-|:-:|:-:|
-| QQVGA2  | 128x160  |
-|  QCIF |  176x144 |
-| HQVGA  | 240x176  |
-| QVGA  | 320x240  |
-|  CIF |  400x296 |
-|  VGA |  640x480 |
-|  SVGA | 800x600  |
-|  XGA |  1024x768 |
-|  SXGA | 1280x1024  |
-|  UXGA | 1600x1200  |
+|Value| Resolution  | size  |
+||:-:|:-:|
+|0| QQVGA  | 160x120  |
+|1| QQVGA2  | 128x160  |
+|2|  QCIF |  176x144 |
+|3| HQVGA  | 240x176  |
+|4| QVGA  | 320x240  |
+|5|  CIF |  400x296 |
+|6|  VGA |  640x480 |
+|7|  SVGA | 800x600  |
+|8|  XGA |  1024x768 |
+|9|  SXGA | 1280x1024  |
+|10|  UXGA | 1600x1200  |
 
 
 reference : https://lang-ship.com/reference/ESP32/latest/sensor_8h_source.html#l00107
