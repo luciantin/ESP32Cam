@@ -1,13 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "src/OV2640.h"
+#include <OV2640.h>
 #include <WiFi.h>
 #include <WebServer.h>
 #include <WiFiClient.h>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Network Settings
 // Wifi passwd and SSID :
-// 1. add wifi_settings.h file or uncomment the defines and comment the include
+// 1. add wifi_settings.h file inside the include dir or uncomment the defines and comment the include
 // 2. add wifi passwd &  SSID
 //#define NET_SSID "****"
 //#define NET_PWD "****" 
@@ -85,24 +85,6 @@ void handle_status(void){ // returns the current sensors settings and other stat
   server.send(200, "text/plain", "Status");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void handle_settings(void){ //handles changes of camera settings by query strings
-  int numOfArgs = server.args();
-  bool QueryStatus = true;
-  
-  for (int i = 0; i < numOfArgs; i++) {
-    String parameter_name = server.argName(i);
-    String parameter_value = server.arg(i);
-    print(parameter_name + " : ")
-    print(parameter_value.toInt());
-    print(parameter_value);
-    if(parameter_name == "resolution") if(!change_resolution(parameter_value.toInt())){ QueryStatus = false;  break;} 
-    if(!change_settings(parameter_name,parameter_value.toInt()) ) { QueryStatus = false;  break;} 
-  } 
-  
-  if(QueryStatus) server.send(200, "text/plain", "OK");       //Response to the HTTP request
-  else server.send(200, "text/plain", "NOPE");       //Response to the HTTP request
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool change_resolution(int value){
   print("Changing settings....");
   
@@ -151,6 +133,24 @@ bool change_settings(String id, int value){
   
   else return false;
   return true;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void handle_settings(void){ //handles changes of camera settings by query strings
+  int numOfArgs = server.args();
+  bool QueryStatus = true;
+  
+  for (int i = 0; i < numOfArgs; i++) {
+    String parameter_name = server.argName(i);
+    String parameter_value = server.arg(i);
+    print(parameter_name + " : ")
+    print(parameter_value.toInt());
+    print(parameter_value);
+    if(parameter_name == "resolution") if(!change_resolution(parameter_value.toInt())){ QueryStatus = false;  break;} 
+    if(!change_settings(parameter_name,parameter_value.toInt()) ) { QueryStatus = false;  break;} 
+  } 
+  
+  if(QueryStatus) server.send(200, "text/plain", "OK");       //Response to the HTTP request
+  else server.send(200, "text/plain", "NOPE");       //Response to the HTTP request
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void handleNotFound()
